@@ -33,7 +33,9 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
 
         self.targetsList = [];
         for target in targets:
-            self.targetsList.append(target.getAttributeNode("name").nodeValue)
+            targetName = target.getAttributeNode("name").nodeValue;
+            if targetName[0] != "_":
+                self.targetsList.append(target.getAttributeNode("name").nodeValue);
 
         self.targetsList = sorted(self.targetsList);
 
