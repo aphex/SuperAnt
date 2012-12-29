@@ -7,25 +7,23 @@ DEFAULT_BUILD_TASK = "build"
 
 class SuperAntExecCommand(sublime_plugin.WindowCommand):
     def run(self, **kwargs):
-
-        package_dir = os.path.join(sublime.packages_path(), "SuperAnt");
+        package_dir = os.path.join(sublime.packages_path(), "Super Ant");
         self.build = os.path.join(package_dir, 'build.xml')
-        self.build_properties = os.path.join(package_dir, 'build.properties')
+
+        s = sublime.load_settings("SuperAnt.sublime-settings");
+        build_file = s.get("build_file", "build.xml");
 
         path = None;
         if len(self.window.folders()) > 0:
             for folder in self.window.folders():
-                if os.path.exists(folder + os.sep + "build.xml"):
-                    self.build = folder + os.sep + "build.xml";
-
-                if os.path.exists(folder + os.sep + "build.properties"):
-                    self.build_properties = folder + os.sep + "build.properties";
-
+                if os.path.exists(folder + os.sep + build_file):
+                    self.build = folder + os.sep + build_file;
         try:
             f = open(self.build);
         except Exception as ex:
             print ex;
-            return 'The file could not be opened'
+            self.window.open_file(os.path.join(package_dir, 'SuperAnt.sublime-settings'));
+            return 'The file could not be opened';
     
         data = f.read();
         dom = parseString(data);
@@ -54,10 +52,10 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             path = None;
             if len(self.window.folders()) > 0:
                 path = self.window.folders()[0];
-
+                
             if path != None:
                 cmd = {
-                    'cmd': [ant, "-f", self.build,"-propertyfile ", self.build_properties, targetName],
+                    'cmd': [ant, "-f", self.build, targetName],
                     'working_dir': path
                 }
 

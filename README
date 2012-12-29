@@ -7,7 +7,11 @@ This plugin adds the ability to choose a target from an ANT build file in the ro
 
 About
 ------------
-This build system is based on the idea that you have a project with a single top level folder. This folder should house your project files along with a build.xml and other build files, in the root. 
+This build system is based on the idea that you have a project with a single top level folder. This folder should house your project files along with a build.xml and other build files, in the root.
+
+Updates 
+------------
+Added the ability to specify the ant build file. This can be accessed through the preferences menu within Sublime Text or the Command Palette under "Preferences : Super Ant - Settings". The settings file will also automatically be opened in the case that SuperAnt cannot file a build file in your project.
 
 
 Prerequisites

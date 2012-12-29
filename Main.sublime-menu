@@ -1,0 +1,20 @@
+[
+    {
+        "caption": "Preferences",
+        "mnemonic": "n",
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "SuperAnt",
+                "mnemonic": "S",
+                "id": "superant-settings",
+                
+                "command": "open_file", "args":
+                {
+                    "file": "${packages}/Super Ant/SuperAnt.sublime-settings"
+                }
+            }
+        ]
+    }
+]

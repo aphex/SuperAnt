@@ -1,0 +1,9 @@
+[
+    {
+        "caption": "Preferences: Super Ant – Settings",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/Super Ant/SuperAnt.sublime-settings"
+        }
+    }
+]
