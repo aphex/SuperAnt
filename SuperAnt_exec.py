@@ -44,11 +44,20 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         dom = parseString(data);
         self.targets = dom.getElementsByTagName('target');
 
+        # get project name for target prefixing in quick panel
+        project_name = None;
+        try:
+            project_name = dom.firstChild.getAttributeNode('name').nodeValue;
+        except Exception, e:
+            # default to folder name if name attribute is not given in project tag
+            project_name = os.path.basename(self.working_dir);
+        print project_name;
+
         self.targetsList = [];
         for target in self.targets:
             targetName = target.getAttributeNode("name").nodeValue;
             if targetName[0] != "_":
-                self.targetsList.append(os.path.basename(self.working_dir)+': '+target.getAttributeNode("name").nodeValue);
+                self.targetsList.append(project_name + ': ' + target.getAttributeNode("name").nodeValue);
 
         self.targetsList = sorted(self.targetsList);
 
