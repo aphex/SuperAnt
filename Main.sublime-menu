@@ -6,14 +6,22 @@
         "children":
         [
             {
-                "caption": "SuperAnt",
-                "mnemonic": "S",
-                "id": "superant-settings",
-                
-                "command": "open_file", "args":
-                {
-                    "file": "${packages}/Super Ant/SuperAnt.sublime-settings"
-                }
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "SuperAnt",
+                        "mnemonic": "S",
+                        "id": "superant-settings",
+                        
+                        "command": "open_file", "args":
+                        {
+                            "file": "${packages}/Super Ant/SuperAnt.sublime-settings"
+                        }
+                    }
+                ]
             }
         ]
     }
