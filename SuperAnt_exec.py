@@ -53,19 +53,25 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             project_name = os.path.basename(self.working_dir);
 
         self.targetsList = [];
+        list_prefix = project_name + ': ';
         for target in self.targets:
             targetName = target.getAttributeNode("name").nodeValue;
             if targetName[0] != "_":
-                self.targetsList.append(project_name + ': ' + targetName);
+                self.targetsList.append(list_prefix + targetName);
 
         self.targetsList = sorted(self.targetsList);
+
+        def cleanName(n):
+            return n.replace(list_prefix, "");
+        
+        self.targetLookup = map(cleanName, self.targetsList)
 
         self.window.show_quick_panel(self.targetsList, self._quick_panel_callback);
 
     def _quick_panel_callback(self, index):
 
         if (index > -1):
-            targetName = self.targets[index].getAttributeNode("name").nodeValue;
+            targetName = self.targetLookup[index];
             
             ant = "ant";
             # Check for Windows Overrides and Merge
