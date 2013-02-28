@@ -1,3 +1,4 @@
 {
-    "target": "super_ant_exec"
+	"target": "super_ant_exec",
+	"working_dir": "${project_path:${folder}}"
 }
