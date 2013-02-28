@@ -51,13 +51,12 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         except Exception, e:
             # default to folder name if name attribute is not given in project tag
             project_name = os.path.basename(self.working_dir);
-        print project_name;
 
         self.targetsList = [];
         for target in self.targets:
             targetName = target.getAttributeNode("name").nodeValue;
             if targetName[0] != "_":
-                self.targetsList.append(project_name + ': ' + target.getAttributeNode("name").nodeValue);
+                self.targetsList.append(project_name + ': ' + targetName);
 
         self.targetsList = sorted(self.targetsList);
 
@@ -67,7 +66,6 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
 
         if (index > -1):
             targetName = self.targets[index].getAttributeNode("name").nodeValue;
-            print targetName;
             
             ant = "ant";
             # Check for Windows Overrides and Merge
@@ -79,6 +77,5 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
                 'working_dir': self.working_dir
             }
 
-            print cmd;
             # run build
             self.window.run_command("exec", cmd);
