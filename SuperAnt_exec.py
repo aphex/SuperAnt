@@ -14,6 +14,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
 
         s = sublime.load_settings("SuperAnt.sublime-settings");
         build_file = s.get("build_file", "build.xml");
+        use_sorting = s.get("use_sorting", "true") == "true";
 
         # buildfile by selection: search build file in project folder that file from active view is in  
         try:
@@ -59,7 +60,8 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             if targetName[0] != "_":
                 self.targetsList.append(list_prefix + targetName);
 
-        self.targetsList = sorted(self.targetsList);
+        if use_sorting:
+            self.targetsList = sorted(self.targetsList);
 
         def cleanName(n):
             return n.replace(list_prefix, "");
