@@ -8,6 +8,12 @@ About
 ------------
 This build system is based on the idea that you have a project with a single top level folder or multiple folders. At least the first folder should house your project files along with a build.xml and other build files, in the root.
 
+Latest Update
+------------
+- Added variable for ANT Import Traversal for nestest targets. (default: true)
+- Added variable for hiding targets without a description. (default: true)
+- Added variable for hiding targets with names that begin with "_". (default: true)
+- Added variable for hiding targets in a project without a project name. (default: true)
 
 Features 
 ------------

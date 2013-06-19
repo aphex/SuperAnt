@@ -11,10 +11,15 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         
         self.working_dir = kwargs['working_dir'];
         self.build = None;
+        self.separator = ".";
 
         s = sublime.load_settings("SuperAnt.sublime-settings");
         build_file = s.get("build_file", "build.xml");
         use_sorting = s.get("use_sorting", "true") == "true";
+        follow_imports = s.get("follow_imports", "true") == "true";
+        hide_targets_without_project_name = s.get("hide_targets_without_project_name", "true") == "true";
+        hide_targets_without_description = s.get("hide_targets_without_description", "true") == "true";
+        hide_targets_starting_with_underscore = s.get("hide_targets_starting_with_underscore", "true") == "true";
 
         # buildfile by selection: search build file in project folder that file from active view is in  
         try:
@@ -28,52 +33,75 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         except Exception as ex:
             print 'No build file in base folder of currently viewed file';
 
-        # buildfile by default: build.xml found in first project folder
+        # buildfile by default: build.xml found in your working directory
         if self.build == None and os.path.exists(self.working_dir + os.sep + build_file):
             self.build = self.working_dir + os.sep + build_file;
 
+        # Load all projects for this build
+        projects = self._get_projects_from_file(self.build, follow_imports, True);
+
+        # loop through all projects and get targets with a description
+        targetNames = [];
+        for project in projects:
+            for target in project.targets:
+                targetName = target.getAttributeNode("name").nodeValue;
+                showTarget = True;
+                if hide_targets_without_description and target.hasAttribute('description') == False :
+                    showTarget = False;
+                if hide_targets_starting_with_underscore and targetName[0] == "_":
+                    showTarget = False;
+                if hide_targets_without_project_name and project.name == None:
+                    showTarget = False;
+
+                if showTarget:
+                    if project.name == None:
+                        targetNames.append(targetName);
+                    else:
+                        targetNames.append(project.name + self.separator + targetName);
+
+        self.targets = sorted(targetNames) if use_sorting else targetNames;
+        self.window.show_quick_panel(self.targets, self._quick_panel_callback);
+
+    def _get_projects_from_file(self, file, followImports, failOnError):
+
         try:
-            f = open(self.build);
+            f = open(file);
         except Exception as ex:
-            print ex;
-            self.window.open_file(os.path.join(package_dir, 'SuperAnt.sublime-settings'));
-            return 'The file could not be opened';
-    
-        self.working_dir = os.path.dirname(self.build);
+            if failOnError:
+                print ex;
+                self.window.open_file(os.path.join(package_dir, 'SuperAnt.sublime-settings'));
+                return 'The file could not be opened';
+            else:
+                return [];
 
         data = f.read();
         dom = parseString(data);
-        self.targets = dom.getElementsByTagName('target');
 
         # get project name for target prefixing in quick panel
         project_name = None;
         try:
-            project_name = dom.firstChild.getAttributeNode('name').nodeValue;
+            project_name = dom.getElementsByTagName("project")[0].getAttributeNode('name').nodeValue;
         except Exception, e:
-            # default to folder name if name attribute is not given in project tag
-            project_name = os.path.basename(self.working_dir);
+            project_name = None;
 
-        self.targetsList = [];
-        list_prefix = project_name + ': ';
-        for target in self.targets:
-            targetName = target.getAttributeNode("name").nodeValue;
-            if targetName[0] != "_":
-                self.targetsList.append(list_prefix + targetName);
+        project = type('project', (object,), {'name' : project_name, 'targets' : dom.getElementsByTagName('target')})
 
-        if use_sorting:
-            self.targetsList = sorted(self.targetsList);
+        projects = [];
+        projects.append(project);
 
-        def cleanName(n):
-            return n.replace(list_prefix, "");
-        
-        self.targetLookup = map(cleanName, self.targetsList)
+        if followImports:
+            imports = dom.getElementsByTagName('import');
+            for imp in imports:
+                importFile = imp.getAttributeNode("file").nodeValue;
+                importFile = importFile.replace("${basedir}", self.working_dir);
+                projects = projects + self._get_projects_from_file(importFile, True, False);
 
-        self.window.show_quick_panel(self.targetsList, self._quick_panel_callback);
+        return projects;
 
     def _quick_panel_callback(self, index):
 
         if (index > -1):
-            targetName = self.targetLookup[index];
+            targetName = self.targets[index];
             
             ant = "ant";
             # Check for Windows Overrides and Merge

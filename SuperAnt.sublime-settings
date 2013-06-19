@@ -1,4 +1,8 @@
 {
 	"build_file" : "build.xml",
-	"use_sorting": "true"
+	"use_sorting": "true",
+	"follow_imports": "true",
+	"hide_targets_without_project_name": "true",
+	"hide_targets_without_description": "true",
+	"hide_targets_starting_with_underscore": "true"
 }
