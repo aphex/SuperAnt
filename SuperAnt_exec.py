@@ -7,7 +7,7 @@ DEFAULT_BUILD_TASK = "build"
 
 class SuperAntExecCommand(sublime_plugin.WindowCommand):
     def run(self, **kwargs):
-        package_dir = os.path.join(sublime.packages_path(), "Super Ant");
+        self.package_dir = os.path.join(sublime.packages_path(), "Super Ant");
         
         self.working_dir = kwargs['working_dir'];
         self.build = None;
@@ -29,16 +29,23 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
                 self.build = active_folder + os.sep + build_file;
                 self.working_dir = active_folder
             else:
-                raise Exception('not a build file');
+                print('No "'+build_file+'" found in "' + active_folder+'".');
         except Exception as ex:
-            print('No build file in base folder of currently viewed file');
+            print('Error Searching for "'+build_file+'" in Active Folder.');
 
         # buildfile by default: build.xml found in your working directory
         if self.build == None and os.path.exists(self.working_dir + os.sep + build_file):
+            print('Unable to find "' + build_file + '" in Active Folder. Checking "' + self.working_dir+ '".');
             self.build = self.working_dir + os.sep + build_file;
 
+        #unable to find buildfile anywhere. Time to give up
+        if self.build == None:
+            print('Unable to find Build File in Active Folder or "' + self.working_dir +'". Showing Settings.');
+            self.window.open_file(os.path.join(self.package_dir, 'SuperAnt.sublime-settings'));
+            return;
+
         # Load all projects for this build
-        projects = self._get_projects_from_file(self.build, follow_imports, True);
+        projects = self._get_projects_from_file(self.build, follow_imports);
 
         # loop through all projects and get targets with a description
         targetNames = [];
@@ -62,17 +69,13 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         self.targets = sorted(targetNames) if use_sorting else targetNames;
         self.window.show_quick_panel(self.targets, self._quick_panel_callback);
 
-    def _get_projects_from_file(self, file, followImports, failOnError):
+    def _get_projects_from_file(self, file, followImports):
 
         try:
             f = open(file);
         except Exception as ex:
-            if failOnError:
-                print ex;
-                self.window.open_file(os.path.join(package_dir, 'SuperAnt.sublime-settings'));
-                return 'The file could not be opened';
-            else:
-                return [];
+            print('The file: "' + file + '" could not be opened');
+            return [];
 
         data = f.read();
         dom = parseString(data);
@@ -94,7 +97,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             for imp in imports:
                 importFile = imp.getAttributeNode("file").nodeValue;
                 importFile = importFile.replace("${basedir}", self.working_dir);
-                projects = projects + self._get_projects_from_file(importFile, True, False);
+                projects = projects + self._get_projects_from_file(importFile, followImports);
 
         return projects;
 
