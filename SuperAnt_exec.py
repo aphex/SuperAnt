@@ -8,6 +8,7 @@ DEFAULT_BUILD_TASK = "build"
 class SuperAntExecCommand(sublime_plugin.WindowCommand):
     def run(self, **kwargs):
         self.package_dir = os.path.join(sublime.packages_path(), "Super Ant");
+        self.mainProject = None;
         
         self.working_dir = kwargs['working_dir'];
         self.build = None;
@@ -45,7 +46,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             return;
 
         # Load all projects for this build
-        projects = self._get_projects_from_file(self.build, follow_imports);
+        projects = self._get_projects_from_file(self.build, follow_imports, True);
 
         # loop through all projects and get targets with a description
         targetNames = [];
@@ -69,7 +70,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         self.targets = sorted(targetNames) if use_sorting else targetNames;
         self.window.show_quick_panel(self.targets, self._quick_panel_callback);
 
-    def _get_projects_from_file(self, file, followImports):
+    def _get_projects_from_file(self, file, followImports, mainProject = False):
 
         try:
             f = open(file);
@@ -86,6 +87,9 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             project_name = dom.getElementsByTagName("project")[0].getAttributeNode('name').nodeValue;
         except Exception, e:
             project_name = None;
+
+        if mainProject == True and project_name != None:
+            self.mainProject = project_name;
 
         project = type('project', (object,), {'name' : project_name, 'targets' : dom.getElementsByTagName('target')})
 
@@ -105,6 +109,8 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
 
         if (index > -1):
             targetName = self.targets[index];
+            if self.mainProject != None:
+                targetName = targetName.replace(self.mainProject + self.separator, "");
             
             ant = "ant";
             # Check for Windows Overrides and Merge
