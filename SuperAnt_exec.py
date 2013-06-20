@@ -31,7 +31,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             else:
                 raise Exception('not a build file');
         except Exception as ex:
-            print 'No build file in base folder of currently viewed file';
+            print('No build file in base folder of currently viewed file');
 
         # buildfile by default: build.xml found in your working directory
         if self.build == None and os.path.exists(self.working_dir + os.sep + build_file):
