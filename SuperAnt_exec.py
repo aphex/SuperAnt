@@ -64,7 +64,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         #unable to find buildfile anywhere. Time to give up
         if self.build == None:
             print('Unable to find Build File in Active Folder or "' + self.working_dir +'". Showing Settings.');
-            self.window.open_file(os.path.join(self.package_dir, 'SuperAnt.sublime-settings'));
+            self.window.open_file(os.path.join(sublime.packages_path(), "User") + os.sep + 'SuperAnt.sublime-settings');
             return;
 
         # Load all projects for this build

@@ -27,6 +27,18 @@ Features
 -- Targets with names that begin with "_". (default: true)
 -- Targets in a project without a project name. (default: true)
 
+User Settings
+------------
+{
+	"build_file" : "build.xml",
+	"use_sorting": "true",
+	"follow_imports": "true",
+	"search_project_folders": "true",
+	"hide_targets_without_project_name": "true",
+	"hide_targets_without_description": "true",
+	"hide_targets_starting_with_underscore": "true"
+}
+
 
 Prerequisites
 ------------
