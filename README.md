@@ -1,4 +1,4 @@
-Super ANT Builder for SublimeText 2
+Super ANT Builder for SublimeText 2+
 ====================================
 
 This plugin adds the ability to choose a target from an ANT build file in the root of your working folder in Sublime Text 2.
@@ -10,16 +10,22 @@ This build system is based on the idea that you have a project with a single top
 
 Latest Update
 ------------
-- Added variable for ANT Import Traversal for nestest targets. (default: true)
-- Added variable for hiding targets without a description. (default: true)
-- Added variable for hiding targets with names that begin with "_". (default: true)
-- Added variable for hiding targets in a project without a project name. (default: true)
+- Sublime Text 3 Support
+- Project Support (SublimeText 3+)
+-- Project Folder Searching for buildfile 
+-- Project Custom buildfile (buildfile property at root of project)
 
 Features 
 ------------
 - Added the ability to specify the ant build file. This can be accessed through the preferences menu within Sublime Text or the Command Palette under "Preferences > Package Settings > Super Ant". The settings file will also automatically be opened in the case that SuperAnt cannot file a build file in your project.
 
 - It is possible to launch a build.xml file from another folder than the main/first one in your sublime project by selecting the according build.xml and run the build command 
+
+- ANT Import Traversal for nestest targets. (default: true)
+- Target Hiding
+-- Without a description. (default: true)
+-- Targets with names that begin with "_". (default: true)
+-- Targets in a project without a project name. (default: true)
 
 
 Prerequisites

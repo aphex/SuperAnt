@@ -18,21 +18,43 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         build_file = s.get("build_file", "build.xml");
         use_sorting = s.get("use_sorting", "true") == "true";
         follow_imports = s.get("follow_imports", "true") == "true";
+        seach_project_folders = s.get("search_project_folders", "true") == "true";
         hide_targets_without_project_name = s.get("hide_targets_without_project_name", "true") == "true";
         hide_targets_without_description = s.get("hide_targets_without_description", "true") == "true";
         hide_targets_starting_with_underscore = s.get("hide_targets_starting_with_underscore", "true") == "true";
 
-        # buildfile by selection: search build file in project folder that file from active view is in  
-        try:
-            active_file = self.window.active_view().file_name();
-            active_folder = os.path.dirname(active_file);
-            if os.path.exists(active_folder + os.sep + build_file):
-                self.build = active_folder + os.sep + build_file;
-                self.working_dir = active_folder
-            else:
-                print('No "'+build_file+'" found in "' + active_folder+'".');
-        except Exception as ex:
-            print('Error Searching for "'+build_file+'" in Active Folder.');
+        if int(sublime.version()) >= 3000:
+            data = self.window.project_data();
+            buildfile = data.get("buildfile", None);
+            folders = data.get("folders", None);
+            if data != None:
+                if buildfile != None:
+                    self.build = os.path.join(self.working_dir, buildfile);
+                    print('Project specified buildfile at "' + self.build + '".');
+                elif folders != None and seach_project_folders:
+                    print('Project detected searching folders for buildfile');
+                    for folder in folders:
+                        folder_path = folder.get("path", None);
+                        if folder_path != None:
+                            current_path = os.path.join(self.working_dir, folder_path);
+                            if os.path.exists(current_path + os.sep + build_file):
+                                self.build = current_path + os.sep + build_file
+                                self.working_dir = current_path;
+                                print('Project folder search found buildfile at "' + self.build + '".');
+                                break;
+
+        if self.build == None:
+            # buildfile by selection: search build file in project folder that file from active view is in  
+            try:
+                active_file = self.window.active_view().file_name();
+                active_folder = os.path.dirname(active_file);
+                if os.path.exists(active_folder + os.sep + build_file):
+                    self.build = active_folder + os.sep + build_file;
+                    self.working_dir = active_folder
+                else:
+                    print('No "'+build_file+'" found in "' + active_folder+'".');
+            except Exception as ex:
+                print('Error Searching for "'+build_file+'" in Active Folder.');
 
         # buildfile by default: build.xml found in your working directory
         if self.build == None and os.path.exists(self.working_dir + os.sep + build_file):
@@ -85,7 +107,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         project_name = None;
         try:
             project_name = dom.getElementsByTagName("project")[0].getAttributeNode('name').nodeValue;
-        except Exception, e:
+        except Exception as e:
             project_name = None;
 
         if mainProject == True and project_name != None:
