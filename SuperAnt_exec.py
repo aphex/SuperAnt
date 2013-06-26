@@ -93,7 +93,8 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(self.targets, self._quick_panel_callback);
 
     def _get_projects_from_file(self, file, followImports, mainProject = False):
-
+        
+        print("Openeing " + file);
         try:
             f = open(file);
         except Exception as ex:
