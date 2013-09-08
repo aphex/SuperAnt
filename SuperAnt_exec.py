@@ -30,6 +30,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
             if data != None:
                 if buildfile != None:
                     self.build = os.path.join(self.working_dir, buildfile);
+                    self.working_dir, filename = os.path.split(self.build);
                     print('Project specified buildfile at "' + self.build + '".');
                 elif folders != None and seach_project_folders:
                     print('Project detected searching folders for buildfile');
