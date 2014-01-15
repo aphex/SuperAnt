@@ -4,6 +4,14 @@ from xml.dom.minidom import parseString
 DEFAULT_BUILD_CMD = "exec"
 DEFAULT_BUILD_TASK = "build"
 
+class SuperAntListTargetsCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        window = self.view.window();
+        active_file = window.active_view().file_name();
+        active_folder = None;
+        if active_file != None:
+            active_folder = os.path.dirname(active_file);
+        self.view.window().run_command('super_ant_exec', {"working_dir":active_folder});
 
 class SuperAntExecCommand(sublime_plugin.WindowCommand):
     def run(self, **kwargs):

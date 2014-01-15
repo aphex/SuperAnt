@@ -5,5 +5,9 @@
         {
             "file": "${packages}/Super Ant/SuperAnt.sublime-settings"
         }
+    },
+    {
+        "caption": "Super Ant - List Targets",
+        "command": "super_ant_list_targets"
     }
 ]
