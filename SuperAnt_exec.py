@@ -30,6 +30,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
         hide_targets_without_project_name = s.get("hide_targets_without_project_name", "true") == "true";
         hide_targets_without_description = s.get("hide_targets_without_description", "true") == "true";
         hide_targets_starting_with_underscore = s.get("hide_targets_starting_with_underscore", "true") == "true";
+        hide_targets_starting_with_dash = s.get("hide_targets_starting_with_dash", "true") == "true";
 
         if int(sublime.version()) >= 3000:
             data = self.window.project_data();
@@ -89,6 +90,8 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
                     showTarget = False;
                 if hide_targets_starting_with_underscore and targetName[0] == "_":
                     showTarget = False;
+                if hide_targets_starting_with_dash and targetName[0] == "-":
+                    showTarget = False;
                 if hide_targets_without_project_name and project.name == None:
                     showTarget = False;
 
@@ -103,7 +106,7 @@ class SuperAntExecCommand(sublime_plugin.WindowCommand):
 
     def _get_projects_from_file(self, file, followImports, mainProject = False):
         
-        print("Openeing " + file);
+        print("Opening " + file);
         try:
             f = open(file);
         except Exception as ex:
