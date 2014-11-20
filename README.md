@@ -36,7 +36,8 @@ User Settings
 	"search_project_folders": "true",
 	"hide_targets_without_project_name": "true",
 	"hide_targets_without_description": "true",
-	"hide_targets_starting_with_underscore": "true"
+  "hide_targets_starting_with_underscore": "true",
+	"hide_targets_starting_with_dash": "true"
 }
 
 
